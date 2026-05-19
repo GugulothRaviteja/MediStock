@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SaleRepository extends MongoRepository<Sale, String> {
     List<Sale> findBySoldAtAfter(LocalDateTime  dateTime);
+    List<Sale> findByMedicineId(String  medicineId);
 }
