@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/medicines")
+@RequestMapping("/medicines" )
 @RequiredArgsConstructor
 @CrossOrigin("*")
-public class MedicineController {
+public class MedicineController   {
 
     private final MedicineService medicineService;
 
@@ -38,7 +38,7 @@ public class MedicineController {
     public Medicine updateMedicine(
             @PathVariable String id,
             @RequestBody MedicineRequest request
-    ) {
+    )  {
 
         return medicineService.updateMedicine(id, request);
     }
