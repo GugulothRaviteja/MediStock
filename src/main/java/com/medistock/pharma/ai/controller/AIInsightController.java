@@ -16,7 +16,6 @@ public class AIInsightController {
     @GetMapping("/insights")
     public List<AIInsightResponse> getInsights() {
 
-        
         return aiInsightService.generateInsights();
     }
 }
