@@ -43,10 +43,16 @@ public class AIInsightService {
 
             String recommendation;
 
-            if (runOutDays <= 10) {
+            if (medicine.getQuantity() <= 10) {
 
                 recommendation =
-                        "Stock may run out soon. Consider restocking.";
+                        "Low stock detected. Restock immediately.";
+            }
+
+            else if (runOutDays <= 10) {
+
+                recommendation =
+                        "Stock may run out soon based on sales.";
             }
 
             else if (runOutDays <= 30) {
