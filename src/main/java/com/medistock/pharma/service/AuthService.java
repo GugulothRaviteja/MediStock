@@ -1,10 +1,8 @@
 package com.medistock.pharma.service;
 
-
-
-
 import com.medistock.pharma.config.JwtUtil;
 import com.medistock.pharma.dto.LoginRequest;
+import com.medistock.pharma.dto.LoginResponse;
 import com.medistock.pharma.dto.RegisterRequest;
 import com.medistock.pharma.model.User;
 import com.medistock.pharma.repository.UserRepository;
@@ -30,7 +28,7 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role("PHARMACIST")
+                .role("STAFF")
                 .build();
 
         userRepository.save(user);
@@ -38,7 +36,29 @@ public class AuthService {
         return "User Registered Successfully";
     }
 
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid Email"));
+
+        boolean isPasswordValid = passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()
+        );
+
+        if (!isPasswordValid) {
+            throw new RuntimeException("Invalid Password");
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return new LoginResponse(
+                token,
+                user.getRole(),
+                user.getUsername()
+        );
+    }
+    /*public String login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid Email"));
@@ -53,5 +73,5 @@ public class AuthService {
         }
 
         return jwtUtil.generateToken(user.getEmail());
-    }
+    }*/
 }

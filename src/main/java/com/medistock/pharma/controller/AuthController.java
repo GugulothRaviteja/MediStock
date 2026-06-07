@@ -1,6 +1,8 @@
 package com.medistock.pharma.controller;
 
 import com.medistock.pharma.dto.LoginRequest;
+import com.medistock.pharma.dto.LoginResponse;
+
 import com.medistock.pharma.dto.RegisterRequest;
 import com.medistock.pharma.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +23,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public LoginResponse login(
+            @RequestBody LoginRequest request
+    ) {
 
         return authService.login(request);
     }
+    /*@PostMapping("/login")
+    public String login(@RequestBody LoginRequest request) {
+
+        return authService.login(request);
+    }*/
 }
