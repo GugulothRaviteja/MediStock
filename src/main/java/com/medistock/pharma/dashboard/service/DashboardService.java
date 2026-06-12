@@ -50,14 +50,27 @@ public class DashboardService   {
                 })
                 .count();
 
-        long totalSales = saleRepository.count();
+//        long totalSales = saleRepository.count();
+        long totalMedicinesSold =
+                saleRepository.findAll()
+                        .stream()
+                        .mapToLong(sale -> sale.getQuantitySold())
+                        .sum();
+
+        double totalSalesRevenue =
+                saleRepository.findAll()
+                        .stream()
+                        .mapToDouble(sale -> sale.getTotalPrice())
+                        .sum();
 
         return DashboardResponse.builder()
                 .totalMedicines(totalMedicines)
                 .totalStockQuantity(totalStockQuantity)
                 .lowStockCount(lowStockCount)
                 .expiryAlertCount(expiryAlertCount)
-                .totalSales(totalSales)
+//                .totalSales(totalSales)
+                .totalMedicinesSold(totalMedicinesSold)
+                .totalSalesRevenue(totalSalesRevenue)
                 .build();
     }
 }

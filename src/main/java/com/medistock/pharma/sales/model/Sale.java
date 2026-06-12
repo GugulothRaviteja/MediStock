@@ -17,9 +17,15 @@ public class Sale {
     @Id
     private String id;
 
+    private String transactionId;
+
     private String medicineId;
 
     private String medicineName;
+
+    private String customerName;
+
+    private  String phoneNumber;
 
     private Integer quantitySold;
 

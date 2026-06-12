@@ -1,5 +1,4 @@
 package com.medistock.pharma.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

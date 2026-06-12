@@ -18,5 +18,7 @@ public class DashboardResponse  {
 
     private long expiryAlertCount;
 
-    private long totalSales;
+//    private long totalSales;
+    private long totalMedicinesSold;
+    private double totalSalesRevenue;
 }

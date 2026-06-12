@@ -1,5 +1,6 @@
 package com.medistock.pharma.sales.controller;
 
+import com.medistock.pharma.sales.dto.SalesHistoryResponse;
 import com.medistock.pharma.sales.dto.SellMedicineRequest;
 import com.medistock.pharma.sales.dto.WeeklySalesReportResponse;
 import com.medistock.pharma.sales.model.Sale;
@@ -28,9 +29,19 @@ public class SalesController {
                 request
         );
     }
+
+    @GetMapping("/history")
+    public List<SalesHistoryResponse> getSalesHistory(){
+        return salesService.getSalesHistory();
+    }
+
     @GetMapping("/weekly-report")
     public List<WeeklySalesReportResponse> getWeeklyHighSalesReport() {
 
         return salesService.getWeeklyHighSalesReport();
+    }
+    @GetMapping
+    public List<Sale> getAllSales() {
+        return salesService.getAllSales();
     }
 }

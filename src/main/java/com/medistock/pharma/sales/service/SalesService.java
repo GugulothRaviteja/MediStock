@@ -2,6 +2,7 @@ package com.medistock.pharma.sales.service;
 
 import com.medistock.pharma.medicine.model.Medicine;
 import com.medistock.pharma.medicine.repository.MedicineRepository;
+import com.medistock.pharma.sales.dto.SalesHistoryResponse;
 import com.medistock.pharma.sales.dto.SellMedicineRequest;
 import com.medistock.pharma.sales.model.Sale;
 import com.medistock.pharma.sales.repository.SaleRepository;
@@ -47,16 +48,90 @@ public class SalesService {
         medicineRepository.save(medicine);
 
         Sale sale = Sale.builder()
+
+                .transactionId(
+                        "TXN-" +
+                                System.currentTimeMillis()
+                )
+
+                .medicineId(medicine.getId())
+
+                .medicineName(
+                        medicine.getMedicineName()
+                )
+
+                .quantitySold(
+                        request.getQuantitySold()
+                )
+
+                .totalPrice(
+                        medicine.getPrice()
+                                *
+                                request.getQuantitySold()
+                )
+
+                .customerName(
+                        request.getCustomerName()
+                )
+
+                .phoneNumber(
+                        request.getPhoneNumber()
+                )
+
+                .soldAt(LocalDateTime.now())
+
+                .build();
+        /*Sale sale = Sale.builder()
                 .medicineId(medicine.getId())
                 .medicineName(medicine.getMedicineName())
                 .quantitySold(request.getQuantitySold())
                 .totalPrice(
                         medicine.getPrice() * request.getQuantitySold()
                 )
+                .customerName(request.getCustomerName())
+                .phoneNumber(request.getPhoneNumber())
+
                 .soldAt(LocalDateTime.now())
-                .build();
+                .build();*/
 
         return saleRepository.save(sale);
+    }
+
+    public List<SalesHistoryResponse> getSalesHistory() {
+
+        return saleRepository.findAll()
+
+                .stream()
+
+                .map(sale ->
+
+                        SalesHistoryResponse.builder()
+
+                                .transactionId(
+                                        sale.getTransactionId()
+                                )
+
+                                .medicineName(
+                                        sale.getMedicineName()
+                                )
+
+                                .quantitySold(
+                                        sale.getQuantitySold()
+                                )
+
+                                .customerName(
+                                        sale.getCustomerName()
+                                )
+
+                                .phoneNumber(
+                                        sale.getPhoneNumber()
+                                )
+
+                                .build()
+
+                )
+
+                .toList();
     }
 
     public List<WeeklySalesReportResponse> getWeeklyHighSalesReport() {
@@ -89,4 +164,8 @@ public class SalesService {
                 )
                 .toList();
     }
+    public List<Sale> getAllSales() {
+        return saleRepository.findAll();
+    }
+
 }
