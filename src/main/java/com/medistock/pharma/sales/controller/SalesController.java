@@ -5,6 +5,7 @@ import com.medistock.pharma.sales.dto.SellMedicineRequest;
 import com.medistock.pharma.sales.dto.WeeklySalesReportResponse;
 import com.medistock.pharma.sales.model.Sale;
 import com.medistock.pharma.sales.service.SalesService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class SalesController {
     @PostMapping("/sell/{medicineId}")
     public Sale sellMedicine(
             @PathVariable String medicineId,
+            @Valid
             @RequestBody SellMedicineRequest request
     ) {
 
