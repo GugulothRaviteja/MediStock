@@ -10,6 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -17,6 +24,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final JavaMailSender mailSender;
+
+    private final Map<String, String> otpStorage =
+            new HashMap<>();
 
     public String register(RegisterRequest request) {
 
@@ -58,20 +69,85 @@ public class AuthService {
                 user.getUsername()
         );
     }
-    /*public String login(LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid Email"));
+    public String sendOtp(String email) {
 
-        boolean isPasswordValid = passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword()
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Email not found"
+                        ));
+
+        String otp = String.valueOf(
+                100000 +
+                        new Random().nextInt(900000)
         );
 
-        if (!isPasswordValid) {
-            throw new RuntimeException("Invalid Password");
+        otpStorage.put(email, otp);
+
+        SimpleMailMessage message =
+                new SimpleMailMessage();
+
+        message.setTo(email);
+
+        message.setSubject(
+                "MediStock Password Reset OTP"
+        );
+
+        message.setText(
+                "Your OTP is: " + otp
+        );
+
+        mailSender.send(message);
+
+        return "OTP Sent Successfully";
+    }
+
+    public String verifyOtp(
+            String email,
+            String otp
+    ) {
+
+        String storedOtp =
+                otpStorage.get(email);
+
+        if (
+                storedOtp == null ||
+                        !storedOtp.equals(otp)
+        ) {
+
+            throw new RuntimeException(
+                    "Invalid OTP"
+            );
         }
 
-        return jwtUtil.generateToken(user.getEmail());
-    }*/
+        return "OTP Verified";
+    }
+
+    public String resetPassword(
+            String email,
+            String newPassword
+    ) {
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "User not found"
+                        ));
+
+        user.setPassword(
+                passwordEncoder.encode(
+                        newPassword
+                )
+        );
+
+        userRepository.save(user);
+
+        otpStorage.remove(email);
+
+        return "Password Reset Successfully";
+    }
+
 }
