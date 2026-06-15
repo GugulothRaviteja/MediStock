@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,4 +26,9 @@ public class User {
 
     private  String otp;
     private String otpExpiryTime;
+
+    private String mobileNumber;
+    private  String status;
+    private String country;
+    private boolean approved;
 }

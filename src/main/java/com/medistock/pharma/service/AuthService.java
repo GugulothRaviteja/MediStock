@@ -5,6 +5,8 @@ import com.medistock.pharma.dto.LoginRequest;
 import com.medistock.pharma.dto.LoginResponse;
 import com.medistock.pharma.dto.RegisterRequest;
 import com.medistock.pharma.model.User;
+import com.medistock.pharma.model.UserNotification;
+import com.medistock.pharma.repository.UserNotificationRepository;
 import com.medistock.pharma.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +31,8 @@ public class AuthService {
     private final Map<String, String> otpStorage =
             new HashMap<>();
 
+    private final UserNotificationRepository notificationRepository;
+
     public String register(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -38,11 +42,26 @@ public class AuthService {
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
+                .country(request.getCountry())
+                .mobileNumber(request.getMobileNumber())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role("STAFF")
+                .status("PENDING")
+                .approved(false)
                 .build();
 
         userRepository.save(user);
+
+        notificationRepository.save(
+
+                UserNotification.builder()
+                        .message(
+                                "New Staff Registration: "
+                                        + user.getUsername()
+                        )
+                        .read(false)
+                        .build()
+        );
 
         return "User Registered Successfully";
     }
@@ -51,6 +70,10 @@ public class AuthService {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid Email"));
+
+        if (!user.isApproved()){
+            throw new RuntimeException("Your account is pending admin approval");
+        }
 
         boolean isPasswordValid = passwordEncoder.matches(
                 request.getPassword(),

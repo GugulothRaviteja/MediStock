@@ -25,7 +25,8 @@ public class UserManagementService {
                         user.getId(),
                         user.getUsername(),
                         user.getEmail(),
-                        user.getRole()
+                        user.getRole(),
+                        user.getStatus()
                 ))
                 .toList();
     }
