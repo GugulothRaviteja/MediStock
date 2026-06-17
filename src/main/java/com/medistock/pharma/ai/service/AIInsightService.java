@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+
 @Service
 @RequiredArgsConstructor
 public class AIInsightService {
@@ -17,7 +21,7 @@ public class AIInsightService {
     private final MedicineRepository medicineRepository;
     private final SaleRepository saleRepository;
 
-    public List<AIInsightResponse> generateInsights() {
+    /*public List<AIInsightResponse> generateInsights() {
 
         List<Medicine> medicines = medicineRepository.findAll();
 
@@ -84,6 +88,72 @@ public class AIInsightService {
                             .recommendation(
                                     recommendation
                             )
+                            .build()
+            );
+        }
+
+        return insights;
+    }*/
+    public List<AIInsightResponse> generateInsights() {
+
+        List<Medicine> medicines =
+                medicineRepository.findAll();
+
+        List<AIInsightResponse> insights =
+                new ArrayList<>();
+
+        for (Medicine medicine : medicines) {
+
+            List<Sale> sales =
+                    saleRepository.findByMedicineId(
+                            medicine.getId()
+                    );
+
+            int totalSold =
+                    sales.stream()
+                            .mapToInt(
+                                    Sale::getQuantitySold
+                            )
+                            .sum();
+
+            String recommendation =
+                    "Stock Level Healthy";
+
+            if (medicine.getQuantity() < 10) {
+
+                recommendation =
+                        "LOW STOCK - Restock Immediately";
+            }
+
+            insights.add(
+
+                    AIInsightResponse.builder()
+
+                            .medicineName(
+                                    medicine.getMedicineName()
+                            )
+
+                            .currentStock(
+                                    medicine.getQuantity()
+                            )
+
+                            .salesQuantity(
+                                    totalSold
+                            )
+
+                            .price(
+                                    medicine.getPrice()
+                            )
+
+                            .expiryDate(
+                                    medicine.getExpiryDate()
+                                            .toString()
+                            )
+
+                            .recommendation(
+                                    recommendation
+                            )
+
                             .build()
             );
         }
